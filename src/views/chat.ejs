@@ -1,20 +1,54 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title>
-chat
-</title>
-</head>
+  <title>Chat Room</title>
+  </head>
 <body>
-<ul id="chat-messages">
-  <% messages.forEach(msg => { %>
-    <li id="message-<%= msg.id %>">
-      <strong><%= msg.userId %></strong>: <span id="msg-content-<%= msg.id %>"><%= msg.content %></span>
-      <% if (msg.userId === currentUser.id) { %>
-        <button onclick="editMessage(<%= msg.id %>)">Edit</button>
-        <button onclick="deleteMessage(<%= msg.id %>)">Hapus</button>
-      <% } %>
-    </li>
-  <% }) %>
-</ul>
-</body>
+  <h2>Chat Room</h2>
+  <ul id="messageList"></ul>
+  
+  <input type="text" id="messageInput" placeholder="Enter Message" />
+  <button id="sendMessage">Send</button>
+  
+  <script>
+    async function sendMessage() {
+      const messageInput = document.getElementById("messageInput");
+      const content = messageInput.value;
+      if (!content) return alert("Masukkan pesan!");
+  
+      const response = await fetch("/send-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: "<%= username %>",
+          roomId: "<%= roomId %>",
+          content: content,
+        }),
+      });
+  
+      const result = await response.json();
+      if (result.success) {
+        messageInput.value = "";
+        loadMessages();
+      } else {
+        alert(result.error);
+      }
+    }
+  
+    async function loadMessages() {
+      const response = await fetch(`/messages/<%= roomId %>`);
+      const messages = await response.json();
+      const messageList = document.getElementById("messageList");
+      messageList.innerHTML = "";
+  
+      messages.forEach(msg => {
+        const li = document.createElement("li");
+        li.innerText = msg.content;
+        messageList.appendChild(li);
+      });
+    }
+  
+    document.getElementById("sendMessage").addEventListener("click", sendMessage);
+    window.onload = loadMessages;
+  </script></body>
 </html>

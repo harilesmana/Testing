@@ -3,17 +3,18 @@ import { db } from "../db/client";
 import { rooms } from "../db/schema";
 
 export const roomRoutes = new Elysia()
-  .get("/rooms", async () => {
-    return await db.select().from(rooms);
-  })
-
-  .post("/rooms", async ({ body, set }) => {
-    const { name } = body;
-    if (!name) {
+  .post("/create-room", async ({ body, set }) => {
+    const { roomName } = body;
+    if (!roomName) {
       set.status = 400;
-      return { error: "Nama room wajib diisi!" };
+      return { error: "Nama room tidak boleh kosong!" };
     }
 
-    await db.insert(rooms).values({ name });
-    return { success: true, message: "Room berhasil dibuat!" };
+    const [room] = await db.insert(rooms).values({ name: roomName }).returning({ id: rooms.id });
+
+    return { success: true, roomId: room.id };
+  })
+
+  .get("/rooms", async () => {
+    return await db.select().from(rooms);
   });

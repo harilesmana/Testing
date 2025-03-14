@@ -1,20 +1,30 @@
 <html>
-<head>
-<title>
-room
-</title>
-</head>
-
-<body>
-
-<ul>
-  <% rooms.forEach(room => { %>
-    <li><a href="/chat/<%= room.id %>"><%= room.name %></a></li>
-  <% }) %>
-</ul>
-<form action="/rooms" method="post">
-  <input type="text" name="name" placeholder="Room Name" required />
-  <button type="submit">Create Room</button>
-</form>
-</body>
+  <head>
+    <title>room</title>
+  </head>
+  <body>
+    <h2>Create Room</h2>
+    <input type="text" id="roomName" placeholder="Enter Room Name" />
+    <button id="createRoom">Create</button>
+    
+    <script>
+      document.getElementById("createRoom").addEventListener("click", async () => {
+        const roomName = document.getElementById("roomName").value;
+        if (!roomName) return alert("Masukkan nama room!");
+    
+        const response = await fetch("/create-room", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ roomName }),
+        });
+    
+        const result = await response.json();
+        if (result.success) {
+          window.location.href = `/chat/${result.roomId}`;
+        } else {
+          alert(result.error);
+        }
+      });
+    </script>
+  </body>
 </html>
