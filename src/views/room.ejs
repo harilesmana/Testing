@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>
+room
+</title>
+</head>
+
+<body>
+
+<ul>
+  <% rooms.forEach(room => { %>
+    <li><a href="/chat/<%= room.id %>"><%= room.name %></a></li>
+  <% }) %>
+</ul>
+<form action="/rooms" method="post">
+  <input type="text" name="name" placeholder="Room Name" required />
+  <button type="submit">Create Room</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>
+chat
+</title>
+</head>
+<body>
+<ul id="chat-messages">
+  <% messages.forEach(msg => { %>
+    <li id="message-<%= msg.id %>">
+      <strong><%= msg.userId %></strong>: <span id="msg-content-<%= msg.id %>"><%= msg.content %></span>
+      <% if (msg.userId === currentUser.id) { %>
+        <button onclick="editMessage(<%= msg.id %>)">Edit</button>
+        <button onclick="deleteMessage(<%= msg.id %>)">Hapus</button>
+      <% } %>
+    </li>
+  <% }) %>
+</ul>
+</body>
+</html>
